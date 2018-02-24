@@ -18,9 +18,11 @@ from solver import I1andI2, J, minimizeJ
 #
 ##########################################################################################
 
-u = np.sin(np.linspace(0., 6*np.pi, 1000))
+t = np.linspace(0., 1, 1000)
 
-plt.plot(u, label='original guess')
+u = np.sin(10. * 2. * np.pi * t)
+u_original = u.copy()
+
 
 print(I1andI2(u))
 
@@ -34,5 +36,15 @@ minJ = minimizeJ(u)
 
 print(I1andI2(u))
 
-plt.plot(u, label='optimized')
+plt.subplot(121)
+plt.title("function")
+plt.plot(t, u_original, label='original guess')
+plt.plot(t, u, '-', label='optimized')
+
+
+plt.subplot(122)
+plt.title("derivatives")
+plt.plot(t, np.gradient(u_original), label='original guess')
+plt.plot(t, np.gradient(u), '-', label='optimized')
+
 plt.show()

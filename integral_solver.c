@@ -12,8 +12,9 @@ double I1(const double *u, const size_t u_size)
 {
     double sum = 0.;
 
+    #pragma omp parallel for reduction (+:sum)
     for(size_t k = 0; k < u_size; k++)
-        sum += sinh(u[k]);
+        sum = sum + sinh(u[k]);
 
     return sum;
 }
@@ -27,9 +28,10 @@ double I2(const double *u, const size_t u_size)
 {
     double sum = 0.;
 
+    #pragma omp parallel for reduction (+:sum)
     for(size_t k = 0; k < u_size; k++)
         for(size_t l = 0; l < k + 1; l++)
-            sum += sinh(u[k] - u[l]);
+            sum = sum + sinh(u[k] - u[l]);
 
     return sum;
 }
@@ -86,7 +88,7 @@ double minimizeJ(double *u, const size_t u_size)
     nlopt_set_min_objective(opt, nloptJ, NULL);
 
     // Set the relative numerical tolerance for convergence
-    nlopt_set_xtol_rel(opt, 1e-12);
+    nlopt_set_xtol_rel(opt, 1e-14);
 
     // Start the minimization
     double minJ = -1.;

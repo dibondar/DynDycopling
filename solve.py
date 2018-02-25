@@ -18,9 +18,9 @@ from solver import I1andI2, J, minimizeJ
 #
 ##########################################################################################
 
-t = np.linspace(0., 1, 1000)
+t = np.linspace(0., 1, 100000 - 1)
 
-u = np.sin(10. * 2. * np.pi * t)
+u = np.cos(1. * 2. * np.pi * t)
 u_original = u.copy()
 
 

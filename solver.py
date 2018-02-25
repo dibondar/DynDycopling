@@ -9,7 +9,14 @@ import ctypes
 from ctypes import c_double, c_size_t, POINTER
 
 # Load the shared library assuming that it is in the same directory
-lib = ctypes.cdll.LoadLibrary(os.getcwd() + "/integral_solver.so")
+try:
+    lib = ctypes.cdll.LoadLibrary(os.getcwd() + "/integral_solver.so")
+except OSError:
+    raise NotImplementedError(
+        """The library is absent. You must compile the C shared library using the following command:
+            gcc -O3 -fPIC -shared -o integral_solver.so integral_solver.c -lm -fopenmp -lnlopt
+        """
+    )
 
 ############################################################################################
 #
@@ -20,14 +27,20 @@ lib = ctypes.cdll.LoadLibrary(os.getcwd() + "/integral_solver.so")
 lib.I1.argtypes = (POINTER(c_double), c_size_t)
 lib.I1.restype = c_double
 
+
+def I1(u):
+    return lib.I1(u.ctypes.data_as(POINTER(c_double)), u.size)
+
 lib.I2.argtypes = (POINTER(c_double), c_size_t)
 lib.I2.restype = c_double
 
+
+def I2(u):
+    return lib.I2(u.ctypes.data_as(POINTER(c_double)), u.size)
+
+
 def I1andI2(u):
-    return (
-        lib.I1(u.ctypes.data_as(POINTER(c_double)), u.size),
-        lib.I2(u.ctypes.data_as(POINTER(c_double)), u.size)
-    )
+    return I1(u), I2(u)
 
 ############################################################################################
 #
